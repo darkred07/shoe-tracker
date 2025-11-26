@@ -24,6 +24,16 @@
             "name": "Adidas Shoes - Sporting",
             "url": "https://www.sporting.com.ar/adidas?initialMap=category-1,brand&initialQuery=sporting/adidas&map=category-1,category-3,brand,talle,talle,genero&order=OrderByPriceASC&query=/sporting/zapatillas/adidas/41-5/42/hombre&searchState",
             "selector": "#gallery-layout-container"
+        },
+        {
+            "name": "Adidas Shoes - On Sports",
+            "url": "https://www.onsports.com.ar/calzado/zapatillas/adidas/adidas-originals/415/hombre?initialMap=category-1,category-2,genero&initialQuery=calzado/zapatillas/hombre&map=category-1,category-2,brand,brand,talle,genero&order=OrderByPriceASC",
+            "selector": "#gallery-layout-container"
+        },
+        {
+            "name": "Adidas Shoes - Solo Deportes",
+            "url": "https://www.solodeportes.com.ar/hombre/calzado/zapatillas.html?genero=Hombre&manufacturer=Adidas&talle=41.5&product_list_order=low_to_high",
+            "selector": ".product-items"
         }
     ]
 }
