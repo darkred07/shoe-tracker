@@ -1,7 +1,7 @@
 {
     "settings": {
         "model": "gemini-flash-latest",
-        "threshold": 78000,
+        "threshold": 71000,
         "shoe_names": [
             "Gazelle",
             "Samba",
