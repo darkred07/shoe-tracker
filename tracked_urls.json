@@ -3,10 +3,10 @@
         "model": "gemini-flash-latest",
         "threshold": 65000,
         "shoe_names": [
-            "gazelle",
+            "Gazelle",
             "Samba",
             "Spezial",
-            "campus"
+            "Campus"
         ]
     },
     "urls": [
