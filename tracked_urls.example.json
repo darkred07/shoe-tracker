@@ -1,0 +1,24 @@
+{
+    "settings": {
+        "model": "gemini-2.5-pro"
+    },
+    "urls": [
+        {
+            "name": "Adidas Shoes - Woker Sporting",
+            "url": "https://www.wokerbysporting.com.ar/hombre?category=shoes",
+            "threshold": 50000,
+            "selector": "#gallery-layout-container"
+        },
+        {
+            "name": "Nike Shoes - Another Store",
+            "url": "https://example.com/nike-shoes",
+            "threshold": 75000,
+            "selector": ".product-grid"
+        },
+        {
+            "name": "All Products - No Specific Selector",
+            "url": "https://example.com/products",
+            "threshold": 100000
+        }
+    ]
+}

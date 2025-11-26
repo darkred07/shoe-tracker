@@ -1,0 +1,18 @@
+{
+    "settings": {
+        "model": "gemini-flash-latest",
+        "threshold": 65000
+    },
+    "urls": [
+        {
+            "name": "Adidas Shoes - Woker Sporting",
+            "url": "https://www.wokerbysporting.com.ar/hombre?initialMap=category-1,genero&initialQuery=woker/hombre&map=category-1,category-3,brand,brand,talle,genero&order=OrderByPriceASC&query=/woker/zapatillas/adidas-originals/adidas-sportswear/41-5/hombre&searchState",
+            "selector": "#gallery-layout-container"
+        },
+        {
+            "name": "Adidas Shoes - Seven Sports",
+            "url": "https://www.sevensport.com.ar/calzado/zapatillas/adidas/41-5/42/hombre?initialMap=category-1,brand&initialQuery=calzado/adidas&map=category-1,category-2,brand,talle,talle,genero&order=OrderByPriceASC",
+            "selector": "#gallery-layout-container"
+        }
+    ]
+}
