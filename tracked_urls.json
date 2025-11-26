@@ -33,7 +33,7 @@
         {
             "name": "Adidas Shoes - Solo Deportes",
             "url": "https://www.solodeportes.com.ar/hombre/calzado/zapatillas.html?genero=Hombre&manufacturer=Adidas&product_list_order=low_to_high&talle=41.5&product_list_limit=36&p=1",
-            "selector": ".products-grid"
+            "selector": ".products.products-grid__layout-default.wrapper"
         }
     ]
 }
