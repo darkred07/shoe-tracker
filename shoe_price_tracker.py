@@ -7,6 +7,7 @@ Tracks shoe prices from multiple URLs and alerts when prices drop below threshol
 import json
 import os
 import requests
+import time
 from datetime import datetime
 from typing import Dict, List, Optional
 import google.generativeai as genai
@@ -327,11 +328,21 @@ If no products found, return: []
                 if len(products) > 10:
                     print(f"      ... and {len(products) - 10} more")
             
-            # Filter by threshold
+            # Filter by threshold and shoe names
+            shoe_names = self.settings.get('shoe_names', [])
             below_threshold = []
+            
             for product in products:
+                # First check if price is below threshold
                 if 'price' in product and product['price'] <= threshold:
-                    below_threshold.append(product)
+                    # If shoe_names filter is empty, include all products
+                    if not shoe_names:
+                        below_threshold.append(product)
+                    else:
+                        # Check if product name contains any of the shoe names (case-insensitive)
+                        product_name = product.get('name', '').lower()
+                        if any(shoe_name.lower() in product_name for shoe_name in shoe_names):
+                            below_threshold.append(product)
             
             return below_threshold, products
             
@@ -356,6 +367,11 @@ If no products found, return: []
         if selector:
             print(f"   🎯 Using selector: {selector}")
         print(f"   💰 Threshold: ${threshold:,.2f}")
+        
+        # Show active name filters
+        shoe_names = self.settings.get('shoe_names', [])
+        if shoe_names:
+            print(f"   👟 Name filters: {', '.join(shoe_names)}")
         
         # Fetch page content with optional selector
         html_content = self.fetch_page_content(url, selector)
@@ -430,9 +446,15 @@ If no products found, return: []
         
         all_alerts = []
         
-        for item in self.tracked_urls:
+        for i, item in enumerate(self.tracked_urls):
             results = self.check_listing(item)
             all_alerts.extend(results)
+            
+            # Rate limiting: max 2 URLs per minute (30 second delay between checks)
+            # Skip delay after the last URL
+            if i < len(self.tracked_urls) - 1:
+                print(f"\n⏳ Rate limiting: waiting 30 seconds before next check...")
+                time.sleep(30)
         
         # Save price history
         self.save_price_history()

@@ -73,7 +73,8 @@ Edit `tracked_urls.json` and add your shoe URLs:
 {
   "settings": {
     "model": "gemini-flash-latest",
-    "threshold": 50000
+    "threshold": 50000,
+    "shoe_names": ["Forum", "Samba", "Rivalry"]
   },
   "urls": [
     {
@@ -94,6 +95,8 @@ Edit `tracked_urls.json` and add your shoe URLs:
 **Settings:**
 - `model`: Gemini model to use (e.g., `gemini-flash-latest`, `gemini-2.5-pro`)
 - `threshold`: Default price threshold for all URLs (can be overridden per URL)
+- `shoe_names`: (Optional) Array of shoe model keywords to filter notifications. Only products containing these keywords (case-insensitive) will trigger alerts. Leave empty `[]` or omit to get alerts for all shoes below threshold.
+  - Example: `["Forum", "Samba", "Rivalry"]` will only alert for shoes with these names
 
 **URL Fields:**
 - `name`: Product description (for your reference)
@@ -222,6 +225,7 @@ Check `price_history.json` to see the extraction history. You may need to adjust
 
 - The script keeps the last 30 price checks in history
 - Gemini API has generous free tier limits (60 requests/minute)
+- **Rate limiting**: The script automatically waits 30 seconds between URL checks to ensure max 2 URLs per minute
 - Price history is stored locally in `price_history.json`
 
 ## 🤝 Contributing

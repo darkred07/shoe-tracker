@@ -1,3 +1,4 @@
 .env
 price_history.json
 logs
+.DS_Store
