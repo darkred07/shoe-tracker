@@ -299,60 +299,69 @@ Return ONLY valid JSON in this exact format (no markdown, no code blocks, no ext
 If no products found, return: []
 """
         
-        try:
-            response = self.model.generate_content(prompt)
-            response_text = response.text.strip()
-            
-            # Remove markdown code blocks if present
-            if response_text.startswith('```'):
-                lines = response_text.split('\n')
-                response_text = '\n'.join(lines[1:-1]) if len(lines) > 2 else response_text
-                response_text = response_text.replace('```json', '').replace('```', '').strip()
-            
-            # Parse JSON
-            products = json.loads(response_text)
-            
-            if not isinstance(products, list):
-                print(f"   ⚠️  Unexpected response format")
-                if debug:
-                    print(f"   📋 Raw response: {response_text[:300]}...")
-                return [], []
-            
-            # Debug: Show all products found
-            if debug and products:
-                print(f"\n   📦 Total products extracted: {len(products)}")
-                print(f"   💵 Price range: ${min(p.get('price', 0) for p in products):,.2f} - ${max(p.get('price', 0) for p in products):,.2f}")
-                print(f"\n   📋 All products found:")
-                for i, product in enumerate(products[:10], 1):  # Show first 10
-                    print(f"      {i}. {product.get('name', 'Unknown')}: ${product.get('price', 0):,.2f}")
-                if len(products) > 10:
-                    print(f"      ... and {len(products) - 10} more")
-            
-            # Filter by threshold and shoe names
-            shoe_names = self.settings.get('shoe_names', [])
-            below_threshold = []
-            
-            for product in products:
-                # First check if price is below threshold
-                if 'price' in product and product['price'] <= threshold:
-                    # If shoe_names filter is empty, include all products
-                    if not shoe_names:
-                        below_threshold.append(product)
-                    else:
-                        # Check if product name contains any of the shoe names (case-insensitive)
-                        product_name = product.get('name', '').lower()
-                        if any(shoe_name.lower() in product_name for shoe_name in shoe_names):
+        # Retry loop for Gemini API
+        max_retries = 1
+        for attempt in range(max_retries + 1):
+            try:
+                response = self.model.generate_content(prompt)
+                response_text = response.text.strip()
+                
+                # Remove markdown code blocks if present
+                if response_text.startswith('```'):
+                    lines = response_text.split('\n')
+                    response_text = '\n'.join(lines[1:-1]) if len(lines) > 2 else response_text
+                    response_text = response_text.replace('```json', '').replace('```', '').strip()
+                
+                # Parse JSON
+                products = json.loads(response_text)
+                
+                if not isinstance(products, list):
+                    print(f"   ⚠️  Unexpected response format")
+                    if debug:
+                        print(f"   📋 Raw response: {response_text[:300]}...")
+                    return [], []
+                
+                # Debug: Show all products found
+                if debug and products:
+                    print(f"\n   📦 Total products extracted: {len(products)}")
+                    print(f"   💵 Price range: ${min(p.get('price', 0) for p in products):,.2f} - ${max(p.get('price', 0) for p in products):,.2f}")
+                    print(f"\n   📋 All products found:")
+                    for i, product in enumerate(products[:10], 1):  # Show first 10
+                        print(f"      {i}. {product.get('name', 'Unknown')}: ${product.get('price', 0):,.2f}")
+                    if len(products) > 10:
+                        print(f"      ... and {len(products) - 10} more")
+                
+                # Filter by threshold and shoe names
+                shoe_names = self.settings.get('shoe_names', [])
+                below_threshold = []
+                
+                for product in products:
+                    # First check if price is below threshold
+                    if 'price' in product and product['price'] <= threshold:
+                        # If shoe_names filter is empty, include all products
+                        if not shoe_names:
                             below_threshold.append(product)
-            
-            return below_threshold, products
-            
-        except json.JSONDecodeError as e:
-            print(f"❌ JSON parsing error: {e}")
-            print(f"   📋 Raw response: {response_text[:500]}...")
-            return [], []
-        except Exception as e:
-            print(f"❌ Gemini API error: {e}")
-            return [], []
+                        else:
+                            # Check if product name contains any of the shoe names (case-insensitive)
+                            product_name = product.get('name', '').lower()
+                            if any(shoe_name.lower() in product_name for shoe_name in shoe_names):
+                                below_threshold.append(product)
+                
+                return below_threshold, products
+                
+            except Exception as e:
+                if attempt < max_retries:
+                    print(f"   ⚠️  Gemini API error: {e}")
+                    print(f"   ⏳ Retrying in 30 seconds... (Attempt {attempt + 1}/{max_retries})")
+                    time.sleep(30)
+                else:
+                    print(f"❌ Gemini API error after {max_retries + 1} attempts: {e}")
+                    if 'response' in locals() and hasattr(response, 'text'):
+                         try:
+                             print(f"   📋 Raw response: {response.text[:500]}...")
+                         except:
+                             pass
+                    return [], []
     
     def check_listing(self, item: Dict) -> List[Dict]:
         """Check a listing page for all products below threshold."""
