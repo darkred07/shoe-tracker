@@ -2,7 +2,7 @@ name: daily-run
 
 on:
   schedule:
-    - cron: "0 10 * * *"  # 1 vez por día (a las 10 UTC)
+    - cron: "0 12 * * *"  # 1 vez por día (a las 12 UTC)
   workflow_dispatch:      # correr a mano cuando quieras
 
 jobs:
